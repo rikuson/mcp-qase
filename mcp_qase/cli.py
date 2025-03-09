@@ -1,7 +1,5 @@
-import asyncio
 import typer
-from typing import Optional
-from mcp.server.fastmcp import FastMCP
+from qaseio import Configuration
 
 from .server import QaseMCPServer
 
@@ -10,18 +8,24 @@ app = typer.Typer()
 @app.command()
 def main(
     token: str = typer.Option(..., help="Qase API token", envvar="QASE_API_TOKEN"),
-    host: str = typer.Option("127.0.0.1", help="Host to bind the server to"),
-    port: int = typer.Option(8000, help="Port to bind the server to"),
+    host: str = typer.Option("https://api.qase.io/v1", help="Qase API host URL"),
     dev: bool = typer.Option(False, help="Run in development mode with MCP Inspector"),
 ):
     """Start the MCP server for Qase API"""
-    server = QaseMCPServer(token)
+    # Configure Qase API client
+    configuration = Configuration()
+    configuration.host = host
+    configuration.api_key["Token"] = token
+
+    # Initialize server
+    server = QaseMCPServer(token, configuration)
+    
     try:
         if dev:
             from mcp.cli import run_dev
             run_dev(server.mcp)
         else:
-            asyncio.run(server.start(host, port))
+            server.mcp.run()
     except KeyboardInterrupt:
         print("\nShutting down server...")
 
