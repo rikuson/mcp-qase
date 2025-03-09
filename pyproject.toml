@@ -1,0 +1,23 @@
+[tool.poetry]
+name = "mcp-qase"
+version = "0.1.0"
+description = "MCP server implementation for Qase API"
+authors = ["Your Name <your.email@example.com>"]
+readme = "README.md"
+packages = [{include = "mcp_qase"}]
+
+[tool.poetry.dependencies]
+python = "^3.9"
+fastapi = "^0.109.0"
+uvicorn = "^0.27.0"
+httpx = "^0.26.0"
+python-dotenv = "^1.0.0"
+typer = "^0.9.0"
+pydantic = "^2.6.0"
+
+[tool.poetry.scripts]
+mcp-qase = "mcp_qase.cli:app"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api" 
