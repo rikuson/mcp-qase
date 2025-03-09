@@ -1,60 +1,68 @@
-from typing import Any, Dict, Optional
-import httpx
-from pydantic import BaseModel
+from typing import Any, Dict, List, Optional
+from qaseio.client import QaseApi
+from qaseio.models import (
+    TestCase,
+    TestCaseCreate,
+    TestRun,
+    TestRunCreate,
+    Project,
+    ProjectCreate,
+    Defect,
+    DefectCreate,
+    Suite,
+    SuiteCreate,
+)
 
 class QaseClient:
-    def __init__(self, base_url: str, token: str):
-        self.base_url = base_url.rstrip("/")
-        self.token = token
-        self.client = httpx.AsyncClient(
-            base_url=self.base_url,
-            headers={
-                "Token": token,
-                "Content-Type": "application/json",
-            },
-        )
+    def __init__(self, api_token: str):
+        self.client = QaseApi(api_token)
 
-    async def _request(
-        self,
-        method: str,
-        path: str,
-        *,
-        params: Optional[Dict[str, Any]] = None,
-        json: Optional[Dict[str, Any]] = None,
-    ) -> Dict[str, Any]:
-        response = await self.client.request(
-            method,
-            path,
-            params=params,
-            json=json,
-        )
-        response.raise_for_status()
-        return response.json()
-
-    async def get_projects(self) -> Dict[str, Any]:
+    async def get_projects(self) -> List[Project]:
         """Get all projects"""
-        return await self._request("GET", "/v1/project")
+        response = self.client.projects.get_all()
+        return response.data
 
-    async def get_test_cases(self, project_code: str) -> Dict[str, Any]:
+    async def create_project(self, data: ProjectCreate) -> Project:
+        """Create a new project"""
+        response = self.client.projects.create(data)
+        return response.data
+
+    async def get_test_cases(self, project_code: str) -> List[TestCase]:
         """Get all test cases for a project"""
-        return await self._request("GET", f"/v1/case/{project_code}")
+        response = self.client.cases.get_all(project_code)
+        return response.data
 
-    async def create_test_case(
-        self, project_code: str, data: Dict[str, Any]
-    ) -> Dict[str, Any]:
+    async def create_test_case(self, project_code: str, data: TestCaseCreate) -> TestCase:
         """Create a new test case"""
-        return await self._request("POST", f"/v1/case/{project_code}", json=data)
+        response = self.client.cases.create(project_code, data)
+        return response.data
 
-    async def get_test_runs(self, project_code: str) -> Dict[str, Any]:
+    async def get_test_runs(self, project_code: str) -> List[TestRun]:
         """Get all test runs for a project"""
-        return await self._request("GET", f"/v1/run/{project_code}")
+        response = self.client.runs.get_all(project_code)
+        return response.data
 
-    async def create_test_run(
-        self, project_code: str, data: Dict[str, Any]
-    ) -> Dict[str, Any]:
+    async def create_test_run(self, project_code: str, data: TestRunCreate) -> TestRun:
         """Create a new test run"""
-        return await self._request("POST", f"/v1/run/{project_code}", json=data)
+        response = self.client.runs.create(project_code, data)
+        return response.data
 
-    async def close(self):
-        """Close the HTTP client"""
-        await self.client.aclose() 
+    async def get_defects(self, project_code: str) -> List[Defect]:
+        """Get all defects for a project"""
+        response = self.client.defects.get_all(project_code)
+        return response.data
+
+    async def create_defect(self, project_code: str, data: DefectCreate) -> Defect:
+        """Create a new defect"""
+        response = self.client.defects.create(project_code, data)
+        return response.data
+
+    async def get_suites(self, project_code: str) -> List[Suite]:
+        """Get all test suites for a project"""
+        response = self.client.suites.get_all(project_code)
+        return response.data
+
+    async def create_suite(self, project_code: str, data: SuiteCreate) -> Suite:
+        """Create a new test suite"""
+        response = self.client.suites.create(project_code, data)
+        return response.data 

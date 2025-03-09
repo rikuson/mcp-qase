@@ -1,66 +1,112 @@
-from fastapi import FastAPI, HTTPException, Depends
-from fastapi.middleware.cors import CORSMiddleware
-from typing import Dict, Any
+import asyncio
+from typing import Any, Dict, List, Optional
+from qaseio.models import (
+    TestCase,
+    TestCaseCreate,
+    TestRun,
+    TestRunCreate,
+    Project,
+    ProjectCreate,
+    Defect,
+    DefectCreate,
+    Suite,
+    SuiteCreate,
+)
 
 from .client import QaseClient
 
-def create_app(base_url: str, token: str) -> FastAPI:
-    app = FastAPI(title="MCP Qase API Server")
-    
-    # CORSミドルウェアの設定
-    app.add_middleware(
-        CORSMiddleware,
-        allow_origins=["*"],
-        allow_credentials=True,
-        allow_methods=["*"],
-        allow_headers=["*"],
-    )
+class QaseMCPServer:
+    def __init__(self, token: str):
+        self.client = QaseClient(token)
+        self.server = None
 
-    # QaseClientのインスタンスを作成
-    client = QaseClient(base_url, token)
+    async def start(self, host: str = "127.0.0.1", port: int = 8000):
+        """Start the MCP server"""
+        self.server = await asyncio.start_server(
+            self._handle_client,
+            host,
+            port,
+        )
+        addr = self.server.sockets[0].getsockname()
+        print(f"Serving on {addr}")
+        async with self.server:
+            await self.server.serve_forever()
 
-    @app.on_event("shutdown")
-    async def shutdown_event():
-        await client.close()
-
-    @app.get("/api/projects")
-    async def get_projects():
-        """プロジェクト一覧を取得"""
+    async def _handle_client(self, reader: asyncio.StreamReader, writer: asyncio.StreamWriter):
+        """Handle client connection"""
         try:
-            return await client.get_projects()
-        except Exception as e:
-            raise HTTPException(status_code=500, detail=str(e))
+            while True:
+                data = await reader.read(1024)
+                if not data:
+                    break
 
-    @app.get("/api/projects/{project_code}/cases")
-    async def get_test_cases(project_code: str):
-        """テストケース一覧を取得"""
+                message = data.decode()
+                response = await self._process_message(message)
+                writer.write(response.encode())
+                await writer.drain()
+        except Exception as e:
+            print(f"Error handling client: {e}")
+        finally:
+            writer.close()
+            await writer.wait_closed()
+
+    async def _process_message(self, message: str) -> str:
+        """Process incoming MCP message"""
         try:
-            return await client.get_test_cases(project_code)
-        except Exception as e:
-            raise HTTPException(status_code=500, detail=str(e))
+            # Parse message and route to appropriate handler
+            # This is a simplified example - you would need to implement proper MCP protocol parsing
+            parts = message.split()
+            if not parts:
+                return "ERROR: Empty message"
 
-    @app.post("/api/projects/{project_code}/cases")
-    async def create_test_case(project_code: str, data: Dict[str, Any]):
-        """テストケースを作成"""
-        try:
-            return await client.create_test_case(project_code, data)
-        except Exception as e:
-            raise HTTPException(status_code=500, detail=str(e))
+            command = parts[0]
+            args = parts[1:]
 
-    @app.get("/api/projects/{project_code}/runs")
-    async def get_test_runs(project_code: str):
-        """テストラン一覧を取得"""
-        try:
-            return await client.get_test_runs(project_code)
-        except Exception as e:
-            raise HTTPException(status_code=500, detail=str(e))
+            handlers = {
+                "GET_PROJECTS": self._handle_get_projects,
+                "CREATE_PROJECT": self._handle_create_project,
+                "GET_CASES": self._handle_get_cases,
+                "CREATE_CASE": self._handle_create_case,
+                "GET_RUNS": self._handle_get_runs,
+                "CREATE_RUN": self._handle_create_run,
+                "GET_DEFECTS": self._handle_get_defects,
+                "CREATE_DEFECT": self._handle_create_defect,
+                "GET_SUITES": self._handle_get_suites,
+                "CREATE_SUITE": self._handle_create_suite,
+            }
 
-    @app.post("/api/projects/{project_code}/runs")
-    async def create_test_run(project_code: str, data: Dict[str, Any]):
-        """テストランを作成"""
-        try:
-            return await client.create_test_run(project_code, data)
-        except Exception as e:
-            raise HTTPException(status_code=500, detail=str(e))
+            handler = handlers.get(command)
+            if not handler:
+                return f"ERROR: Unknown command {command}"
 
-    return app 
+            result = await handler(*args)
+            return f"OK {result}"
+
+        except Exception as e:
+            return f"ERROR: {str(e)}"
+
+    async def _handle_get_projects(self) -> str:
+        """Handle GET_PROJECTS command"""
+        projects = await self.client.get_projects()
+        return str([p.dict() for p in projects])
+
+    async def _handle_create_project(self, *args) -> str:
+        """Handle CREATE_PROJECT command"""
+        if len(args) < 2:
+            return "ERROR: Missing project data"
+        data = ProjectCreate(title=args[0], code=args[1])
+        project = await self.client.create_project(data)
+        return str(project.dict())
+
+    async def _handle_get_cases(self, project_code: str) -> str:
+        """Handle GET_CASES command"""
+        cases = await self.client.get_test_cases(project_code)
+        return str([c.dict() for c in cases])
+
+    async def _handle_create_case(self, project_code: str, title: str, *args) -> str:
+        """Handle CREATE_CASE command"""
+        data = TestCaseCreate(title=title)
+        case = await self.client.create_test_case(project_code, data)
+        return str(case.dict())
+
+    # Similar handlers for other commands... 
