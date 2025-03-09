@@ -12,6 +12,7 @@ qase-api-client = "^4.0.0"
 python-dotenv = "^1.0.0"
 typer = "^0.9.0"
 pydantic = "^2.6.0"
+mcp = {extras = ["cli"], version = "^1.3.0"}
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^8.0.0"

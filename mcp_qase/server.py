@@ -1,5 +1,6 @@
 import asyncio
 from typing import Any, Dict, List, Optional
+from mcp.server.fastmcp import FastMCP, Context
 from qaseio.models import (
     TestCase,
     TestCaseCreate,
@@ -18,19 +19,80 @@ from .client import QaseClient
 class QaseMCPServer:
     def __init__(self, token: str):
         self.client = QaseClient(token)
-        self.server = None
+        self.mcp = FastMCP("Qase API")
+        self._setup_resources()
+        self._setup_tools()
+
+    def _setup_resources(self):
+        @self.mcp.resource("projects://")
+        async def get_projects() -> str:
+            """Get all projects"""
+            projects = await self.client.get_projects()
+            return str([p.dict() for p in projects])
+
+        @self.mcp.resource("projects://{project_code}/cases")
+        async def get_test_cases(project_code: str) -> str:
+            """Get all test cases for a project"""
+            cases = await self.client.get_test_cases(project_code)
+            return str([c.dict() for c in cases])
+
+        @self.mcp.resource("projects://{project_code}/runs")
+        async def get_test_runs(project_code: str) -> str:
+            """Get all test runs for a project"""
+            runs = await self.client.get_test_runs(project_code)
+            return str([r.dict() for r in runs])
+
+        @self.mcp.resource("projects://{project_code}/defects")
+        async def get_defects(project_code: str) -> str:
+            """Get all defects for a project"""
+            defects = await self.client.get_defects(project_code)
+            return str([d.dict() for d in defects])
+
+        @self.mcp.resource("projects://{project_code}/suites")
+        async def get_suites(project_code: str) -> str:
+            """Get all test suites for a project"""
+            suites = await self.client.get_suites(project_code)
+            return str([s.dict() for s in suites])
+
+    def _setup_tools(self):
+        @self.mcp.tool()
+        async def create_project(title: str, code: str) -> str:
+            """Create a new project"""
+            data = ProjectCreate(title=title, code=code)
+            project = await self.client.create_project(data)
+            return str(project.dict())
+
+        @self.mcp.tool()
+        async def create_test_case(project_code: str, title: str) -> str:
+            """Create a new test case"""
+            data = TestCaseCreate(title=title)
+            case = await self.client.create_test_case(project_code, data)
+            return str(case.dict())
+
+        @self.mcp.tool()
+        async def create_test_run(project_code: str, title: str) -> str:
+            """Create a new test run"""
+            data = TestRunCreate(title=title)
+            run = await self.client.create_test_run(project_code, data)
+            return str(run.dict())
+
+        @self.mcp.tool()
+        async def create_defect(project_code: str, title: str) -> str:
+            """Create a new defect"""
+            data = DefectCreate(title=title)
+            defect = await self.client.create_defect(project_code, data)
+            return str(defect.dict())
+
+        @self.mcp.tool()
+        async def create_suite(project_code: str, title: str) -> str:
+            """Create a new test suite"""
+            data = SuiteCreate(title=title)
+            suite = await self.client.create_suite(project_code, data)
+            return str(suite.dict())
 
     async def start(self, host: str = "127.0.0.1", port: int = 8000):
         """Start the MCP server"""
-        self.server = await asyncio.start_server(
-            self._handle_client,
-            host,
-            port,
-        )
-        addr = self.server.sockets[0].getsockname()
-        print(f"Serving on {addr}")
-        async with self.server:
-            await self.server.serve_forever()
+        await self.mcp.serve(host=host, port=port)
 
     async def _handle_client(self, reader: asyncio.StreamReader, writer: asyncio.StreamWriter):
         """Handle client connection"""

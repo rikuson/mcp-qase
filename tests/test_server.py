@@ -1,5 +1,4 @@
 import pytest
-import asyncio
 from unittest.mock import Mock, patch
 from qaseio.models import Project, TestCase
 from mcp_qase.server import QaseMCPServer
@@ -10,51 +9,55 @@ def mock_client():
         yield mock
 
 @pytest.fixture
-async def server(mock_client):
-    server = QaseMCPServer("dummy-token")
-    yield server
+def server(mock_client):
+    return QaseMCPServer("dummy-token")
 
 @pytest.mark.asyncio
-async def test_process_get_projects(server):
+async def test_get_projects_resource(server):
     # Arrange
     mock_projects = [Project(id=1, title="Test Project", code="TEST")]
     server.client.get_projects.return_value = mock_projects
 
     # Act
-    result = await server._process_message("GET_PROJECTS")
+    result = await server.mcp.get_resource("projects://")
 
     # Assert
-    assert "OK" in result
     assert "Test Project" in result
     assert "TEST" in result
 
 @pytest.mark.asyncio
-async def test_process_get_cases(server):
+async def test_get_test_cases_resource(server):
     # Arrange
     mock_cases = [TestCase(id=1, title="Test Case")]
     server.client.get_test_cases.return_value = mock_cases
 
     # Act
-    result = await server._process_message("GET_CASES TEST")
+    result = await server.mcp.get_resource("projects://TEST/cases")
 
     # Assert
-    assert "OK" in result
     assert "Test Case" in result
 
 @pytest.mark.asyncio
-async def test_process_invalid_command(server):
+async def test_create_project_tool(server):
+    # Arrange
+    mock_project = Project(id=1, title="New Project", code="NEW")
+    server.client.create_project.return_value = mock_project
+
     # Act
-    result = await server._process_message("INVALID_COMMAND")
+    result = await server.mcp.invoke_tool("create_project", ["New Project", "NEW"])
 
     # Assert
-    assert "ERROR" in result
-    assert "Unknown command" in result
+    assert "New Project" in result
+    assert "NEW" in result
 
 @pytest.mark.asyncio
-async def test_process_empty_message(server):
+async def test_create_test_case_tool(server):
+    # Arrange
+    mock_case = TestCase(id=1, title="New Test Case")
+    server.client.create_test_case.return_value = mock_case
+
     # Act
-    result = await server._process_message("")
+    result = await server.mcp.invoke_tool("create_test_case", ["TEST", "New Test Case"])
 
     # Assert
-    assert "ERROR" in result
-    assert "Empty message" in result 
+    assert "New Test Case" in result 
