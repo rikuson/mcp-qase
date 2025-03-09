@@ -8,16 +8,43 @@ packages = [{include = "mcp_qase"}]
 
 [tool.poetry.dependencies]
 python = "^3.9"
-fastapi = "^0.109.0"
-uvicorn = "^0.27.0"
-httpx = "^0.26.0"
+qase-api-client = "^4.0.0"
 python-dotenv = "^1.0.0"
 typer = "^0.9.0"
 pydantic = "^2.6.0"
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^8.0.0"
+pytest-asyncio = "^0.23.0"
+pytest-cov = "^4.1.0"
+black = "^24.2.0"
+isort = "^5.13.0"
+mypy = "^1.8.0"
+ruff = "^0.2.0"
 
 [tool.poetry.scripts]
 mcp-qase = "mcp_qase.cli:app"
 
 [build-system]
 requires = ["poetry-core"]
-build-backend = "poetry.core.masonry.api" 
+build-backend = "poetry.core.masonry.api"
+
+[tool.black]
+line-length = 100
+target-version = ["py39"]
+
+[tool.isort]
+profile = "black"
+line_length = 100
+multi_line_output = 3
+
+[tool.mypy]
+python_version = "3.9"
+strict = true
+ignore_missing_imports = true
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+addopts = "-v --cov=mcp_qase --cov-report=term-missing" 
