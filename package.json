@@ -17,7 +17,14 @@
     "inspector": "npx @modelcontextprotocol/inspector build/index.js"
   },
   "dependencies": {
-    "@modelcontextprotocol/sdk": "0.6.0"
+    "@modelcontextprotocol/sdk": "0.6.0",
+    "@types/ramda": "^0.30.2",
+    "neverthrow": "^8.2.0",
+    "qaseio": "^2.4.1",
+    "ramda": "^0.30.1",
+    "ts-pattern": "^5.6.2",
+    "zod": "^3.24.2",
+    "zod-to-json-schema": "^3.24.3"
   },
   "devDependencies": {
     "@types/node": "^20.11.24",
