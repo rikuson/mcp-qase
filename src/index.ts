@@ -9,8 +9,8 @@
  * - Summarizing all notes via a prompt
  */
 
-import { Server } from "@modelcontextprotocol/sdk/server/index.js";
-import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
+import { Server } from '@modelcontextprotocol/sdk/server/index.js';
+import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
 import {
   CallToolRequestSchema,
   ListResourcesRequestSchema,
@@ -18,8 +18,8 @@ import {
   ReadResourceRequestSchema,
   ListPromptsRequestSchema,
   GetPromptRequestSchema,
-} from "@modelcontextprotocol/sdk/types.js";
-import { zodToJsonSchema } from "zod-to-json-schema";
+} from '@modelcontextprotocol/sdk/types.js';
+import { zodToJsonSchema } from 'zod-to-json-schema';
 import {
   listProjects,
   getProject,
@@ -29,7 +29,7 @@ import {
   DeleteProjectSchema,
   GetProjectSchema,
   ListProjectsSchema,
-} from "./operations/projects.js";
+} from './operations/projects.js';
 import {
   getResults,
   getResult,
@@ -41,7 +41,7 @@ import {
   createResultBulk,
   UpdateResultSchema,
   updateResult,
-} from "./operations/results.js";
+} from './operations/results.js';
 import {
   getCases,
   getCase,
@@ -51,14 +51,13 @@ import {
   GetCaseSchema,
   CreateCaseSchema,
   UpdateCaseSchema,
-  CreateCaseBulkSchema,
-} from "./operations/cases.js";
+} from './operations/cases.js';
 import {
   getRuns,
   getRun,
   GetRunsSchema,
   GetRunSchema,
-} from "./operations/runs.js";
+} from './operations/runs.js';
 import {
   getPlans,
   getPlan,
@@ -70,7 +69,7 @@ import {
   CreatePlanSchema,
   UpdatePlanSchema,
   DeletePlanSchema,
-} from "./operations/plans.js";
+} from './operations/plans.js';
 import {
   GetSuitesSchema,
   GetSuiteSchema,
@@ -82,7 +81,7 @@ import {
   createSuite,
   updateSuite,
   deleteSuite,
-} from "./operations/suites.js";
+} from './operations/suites.js';
 import {
   GetSharedStepsSchema,
   GetSharedStepSchema,
@@ -94,9 +93,9 @@ import {
   createSharedStep,
   updateSharedStep,
   deleteSharedStep,
-} from "./operations/shared-steps.js";
-import { match } from "ts-pattern";
-import { errAsync } from "neverthrow";
+} from './operations/shared-steps.js';
+import { match } from 'ts-pattern';
+import { errAsync } from 'neverthrow';
 
 /**
  * Create an MCP server with capabilities for resources (to list/read notes),
@@ -104,8 +103,8 @@ import { errAsync } from "neverthrow";
  */
 const server = new Server(
   {
-    name: "mcp-qase",
-    version: "0.1.0",
+    name: 'mcp-qase',
+    version: '0.1.0',
   },
   {
     capabilities: {
@@ -137,153 +136,153 @@ server.setRequestHandler(ReadResourceRequestSchema, () => ({
 server.setRequestHandler(ListToolsRequestSchema, () => ({
   tools: [
     {
-      name: "list_projects",
-      description: "Get All Projects",
+      name: 'list_projects',
+      description: 'Get All Projects',
       inputSchema: zodToJsonSchema(ListProjectsSchema),
     },
     {
-      name: "get_project",
-      description: "Get project by code",
+      name: 'get_project',
+      description: 'Get project by code',
       inputSchema: zodToJsonSchema(GetProjectSchema),
     },
     {
-      name: "create_project",
-      description: "Create new project",
+      name: 'create_project',
+      description: 'Create new project',
       inputSchema: zodToJsonSchema(CreateProjectSchema),
     },
     {
-      name: "delete_project",
-      description: "Delete Project by code",
+      name: 'delete_project',
+      description: 'Delete Project by code',
       inputSchema: zodToJsonSchema(DeleteProjectSchema),
     },
     {
-      name: "get_results",
-      description: "Get all test run results for a project",
+      name: 'get_results',
+      description: 'Get all test run results for a project',
       inputSchema: zodToJsonSchema(GetResultsSchema),
     },
     {
-      name: "get_result",
-      description: "Get test run result by code and hash",
+      name: 'get_result',
+      description: 'Get test run result by code and hash',
       inputSchema: zodToJsonSchema(GetResultSchema),
     },
     {
-      name: "create_result",
-      description: "Create test run result",
+      name: 'create_result',
+      description: 'Create test run result',
       inputSchema: zodToJsonSchema(CreateResultSchema),
     },
     {
-      name: "create_result_bulk",
-      description: "Create multiple test run results in bulk",
+      name: 'create_result_bulk',
+      description: 'Create multiple test run results in bulk',
       inputSchema: zodToJsonSchema(CreateResultBulkSchema),
     },
     {
-      name: "update_result",
-      description: "Update an existing test run result",
+      name: 'update_result',
+      description: 'Update an existing test run result',
       inputSchema: zodToJsonSchema(UpdateResultSchema),
     },
     {
-      name: "get_cases",
-      description: "Get all test cases in a project",
+      name: 'get_cases',
+      description: 'Get all test cases in a project',
       inputSchema: zodToJsonSchema(GetCasesSchema),
     },
     {
-      name: "get_case",
-      description: "Get a specific test case",
+      name: 'get_case',
+      description: 'Get a specific test case',
       inputSchema: zodToJsonSchema(GetCaseSchema),
     },
     {
-      name: "create_case",
-      description: "Create a new test case",
+      name: 'create_case',
+      description: 'Create a new test case',
       inputSchema: zodToJsonSchema(CreateCaseSchema),
     },
     {
-      name: "update_case",
-      description: "Update an existing test case",
+      name: 'update_case',
+      description: 'Update an existing test case',
       inputSchema: zodToJsonSchema(UpdateCaseSchema),
     },
     {
-      name: "get_runs",
-      description: "Get all test runs in a project",
+      name: 'get_runs',
+      description: 'Get all test runs in a project',
       inputSchema: zodToJsonSchema(GetRunsSchema),
     },
     {
-      name: "get_run",
-      description: "Get a specific test run",
+      name: 'get_run',
+      description: 'Get a specific test run',
       inputSchema: zodToJsonSchema(GetRunSchema),
     },
     {
-      name: "get_plans",
-      description: "Get all test plans in a project",
+      name: 'get_plans',
+      description: 'Get all test plans in a project',
       inputSchema: zodToJsonSchema(GetPlansSchema),
     },
     {
-      name: "get_plan",
-      description: "Get a specific test plan",
+      name: 'get_plan',
+      description: 'Get a specific test plan',
       inputSchema: zodToJsonSchema(GetPlanSchema),
     },
     {
-      name: "create_plan",
-      description: "Create a new test plan",
+      name: 'create_plan',
+      description: 'Create a new test plan',
       inputSchema: zodToJsonSchema(CreatePlanSchema),
     },
     {
-      name: "update_plan",
-      description: "Update an existing test plan",
+      name: 'update_plan',
+      description: 'Update an existing test plan',
       inputSchema: zodToJsonSchema(UpdatePlanSchema),
     },
     {
-      name: "delete_plan",
-      description: "Delete a test plan",
+      name: 'delete_plan',
+      description: 'Delete a test plan',
       inputSchema: zodToJsonSchema(DeletePlanSchema),
     },
     {
-      name: "get_suites",
-      description: "Get all test suites in a project",
+      name: 'get_suites',
+      description: 'Get all test suites in a project',
       inputSchema: zodToJsonSchema(GetSuitesSchema),
     },
     {
-      name: "get_suite",
-      description: "Get a specific test suite",
+      name: 'get_suite',
+      description: 'Get a specific test suite',
       inputSchema: zodToJsonSchema(GetSuiteSchema),
     },
     {
-      name: "create_suite",
-      description: "Create a new test suite",
+      name: 'create_suite',
+      description: 'Create a new test suite',
       inputSchema: zodToJsonSchema(CreateSuiteSchema),
     },
     {
-      name: "update_suite",
-      description: "Update an existing test suite",
+      name: 'update_suite',
+      description: 'Update an existing test suite',
       inputSchema: zodToJsonSchema(UpdateSuiteSchema),
     },
     {
-      name: "delete_suite",
-      description: "Delete a test suite",
+      name: 'delete_suite',
+      description: 'Delete a test suite',
       inputSchema: zodToJsonSchema(DeleteSuiteSchema),
     },
     {
-      name: "get_shared_steps",
-      description: "Get all shared steps in a project",
+      name: 'get_shared_steps',
+      description: 'Get all shared steps in a project',
       inputSchema: zodToJsonSchema(GetSharedStepsSchema),
     },
     {
-      name: "get_shared_step",
-      description: "Get a specific shared step",
+      name: 'get_shared_step',
+      description: 'Get a specific shared step',
       inputSchema: zodToJsonSchema(GetSharedStepSchema),
     },
     {
-      name: "create_shared_step",
-      description: "Create a new shared step",
+      name: 'create_shared_step',
+      description: 'Create a new shared step',
       inputSchema: zodToJsonSchema(CreateSharedStepSchema),
     },
     {
-      name: "update_shared_step",
-      description: "Update an existing shared step",
+      name: 'update_shared_step',
+      description: 'Update an existing shared step',
       inputSchema: zodToJsonSchema(UpdateSharedStepSchema),
     },
     {
-      name: "delete_shared_step",
-      description: "Delete a shared step",
+      name: 'delete_shared_step',
+      description: 'Delete a shared step',
       inputSchema: zodToJsonSchema(DeleteSharedStepSchema),
     },
   ],
@@ -295,27 +294,27 @@ server.setRequestHandler(ListToolsRequestSchema, () => ({
  */
 server.setRequestHandler(CallToolRequestSchema, (request) =>
   match(request.params)
-    .with({ name: "list_projects" }, ({ arguments: args }) => {
+    .with({ name: 'list_projects' }, ({ arguments: args }) => {
       const { limit, offset } = ListProjectsSchema.parse(args);
       return listProjects(limit, offset);
     })
-    .with({ name: "get_project" }, ({ arguments: args }) => {
+    .with({ name: 'get_project' }, ({ arguments: args }) => {
       const { code } = GetProjectSchema.parse(args);
       return getProject(code);
     })
-    .with({ name: "create_project" }, ({ arguments: args }) => {
+    .with({ name: 'create_project' }, ({ arguments: args }) => {
       const parsedArgs = CreateProjectSchema.parse(args);
       return createProject(parsedArgs);
     })
-    .with({ name: "delete_project" }, ({ arguments: args }) => {
+    .with({ name: 'delete_project' }, ({ arguments: args }) => {
       const { code } = DeleteProjectSchema.parse(args);
       return deleteProject(code);
     })
-    .with({ name: "get_results" }, ({ arguments: args }) => {
+    .with({ name: 'get_results' }, ({ arguments: args }) => {
       const parsedArgs = GetResultsSchema.parse(args);
       const filters =
         parsedArgs.status || parsedArgs.from || parsedArgs.to
-          ? `status=${parsedArgs.status || ""}&from=${parsedArgs.from || ""}&to=${parsedArgs.to || ""}`
+          ? `status=${parsedArgs.status || ''}&from=${parsedArgs.from || ''}&to=${parsedArgs.to || ''}`
           : undefined;
       return getResults([
         parsedArgs.code,
@@ -324,23 +323,23 @@ server.setRequestHandler(CallToolRequestSchema, (request) =>
         filters,
       ]);
     })
-    .with({ name: "get_result" }, ({ arguments: args }) => {
+    .with({ name: 'get_result' }, ({ arguments: args }) => {
       const { code, hash } = GetResultSchema.parse(args);
       return getResult(code, hash);
     })
-    .with({ name: "create_result" }, ({ arguments: args }) => {
+    .with({ name: 'create_result' }, ({ arguments: args }) => {
       const { code, id, result } = CreateResultSchema.parse(args);
       return createResult(code, id, result);
     })
-    .with({ name: "create_result_bulk" }, ({ arguments: args }) => {
+    .with({ name: 'create_result_bulk' }, ({ arguments: args }) => {
       const { code, id, results } = CreateResultBulkSchema.parse(args);
       return createResultBulk(code, id, results);
     })
-    .with({ name: "update_result" }, ({ arguments: args }) => {
+    .with({ name: 'update_result' }, ({ arguments: args }) => {
       const { code, id, hash, result } = UpdateResultSchema.parse(args);
       return updateResult(code, id, hash, result);
     })
-    .with({ name: "get_cases" }, ({ arguments: args }) => {
+    .with({ name: 'get_cases' }, ({ arguments: args }) => {
       const {
         code,
         search,
@@ -376,19 +375,19 @@ server.setRequestHandler(CallToolRequestSchema, (request) =>
         offset,
       ]);
     })
-    .with({ name: "get_case" }, ({ arguments: args }) => {
+    .with({ name: 'get_case' }, ({ arguments: args }) => {
       const { code, id } = GetCaseSchema.parse(args);
       return getCase(code, id);
     })
-    .with({ name: "create_case" }, ({ arguments: args }) => {
+    .with({ name: 'create_case' }, ({ arguments: args }) => {
       const { code, testCase } = CreateCaseSchema.parse(args);
       return createCase(code, testCase);
     })
-    .with({ name: "update_case" }, ({ arguments: args }) => {
+    .with({ name: 'update_case' }, ({ arguments: args }) => {
       const { code, id, ...caseData } = UpdateCaseSchema.parse(args);
       return updateCase(code, id, caseData);
     })
-    .with({ name: "get_runs" }, ({ arguments: args }) => {
+    .with({ name: 'get_runs' }, ({ arguments: args }) => {
       const {
         code,
         search,
@@ -414,74 +413,74 @@ server.setRequestHandler(CallToolRequestSchema, (request) =>
         include,
       ]);
     })
-    .with({ name: "get_run" }, ({ arguments: args }) => {
+    .with({ name: 'get_run' }, ({ arguments: args }) => {
       const { code, id, include } = GetRunSchema.parse(args);
       return getRun(code, id, include);
     })
-    .with({ name: "get_plans" }, ({ arguments: args }) => {
+    .with({ name: 'get_plans' }, ({ arguments: args }) => {
       const { code, limit, offset } = GetPlansSchema.parse(args);
       return getPlans(code, limit, offset);
     })
-    .with({ name: "get_plan" }, ({ arguments: args }) => {
+    .with({ name: 'get_plan' }, ({ arguments: args }) => {
       const { code, id } = GetPlanSchema.parse(args);
       return getPlan(code, id);
     })
-    .with({ name: "create_plan" }, ({ arguments: args }) => {
+    .with({ name: 'create_plan' }, ({ arguments: args }) => {
       const { code, ...planData } = CreatePlanSchema.parse(args);
       return createPlan(code, planData);
     })
-    .with({ name: "update_plan" }, ({ arguments: args }) => {
+    .with({ name: 'update_plan' }, ({ arguments: args }) => {
       const { code, id, ...planData } = UpdatePlanSchema.parse(args);
       return updatePlan(code, id, planData);
     })
-    .with({ name: "delete_plan" }, ({ arguments: args }) => {
+    .with({ name: 'delete_plan' }, ({ arguments: args }) => {
       const { code, id } = DeletePlanSchema.parse(args);
       return deletePlan(code, id);
     })
-    .with({ name: "get_suites" }, ({ arguments: args }) => {
+    .with({ name: 'get_suites' }, ({ arguments: args }) => {
       const { code, search, limit, offset } = GetSuitesSchema.parse(args);
       return getSuites(code, search, limit, offset);
     })
-    .with({ name: "get_suite" }, ({ arguments: args }) => {
+    .with({ name: 'get_suite' }, ({ arguments: args }) => {
       const { code, id } = GetSuiteSchema.parse(args);
       return getSuite(code, id);
     })
-    .with({ name: "create_suite" }, ({ arguments: args }) => {
+    .with({ name: 'create_suite' }, ({ arguments: args }) => {
       const { code, ...suiteData } = CreateSuiteSchema.parse(args);
       return createSuite(code, suiteData);
     })
-    .with({ name: "update_suite" }, ({ arguments: args }) => {
+    .with({ name: 'update_suite' }, ({ arguments: args }) => {
       const { code, id, ...suiteData } = UpdateSuiteSchema.parse(args);
       return updateSuite(code, id, suiteData);
     })
-    .with({ name: "delete_suite" }, ({ arguments: args }) => {
+    .with({ name: 'delete_suite' }, ({ arguments: args }) => {
       const { code, id } = DeleteSuiteSchema.parse(args);
       return deleteSuite(code, id);
     })
-    .with({ name: "get_shared_steps" }, ({ arguments: args }) => {
+    .with({ name: 'get_shared_steps' }, ({ arguments: args }) => {
       const { code, search, limit, offset } = GetSharedStepsSchema.parse(args);
       return getSharedSteps(code, search, limit, offset);
     })
-    .with({ name: "get_shared_step" }, ({ arguments: args }) => {
+    .with({ name: 'get_shared_step' }, ({ arguments: args }) => {
       const { code, hash } = GetSharedStepSchema.parse(args);
       return getSharedStep(code, hash);
     })
-    .with({ name: "create_shared_step" }, ({ arguments: args }) => {
+    .with({ name: 'create_shared_step' }, ({ arguments: args }) => {
       const { code, ...stepData } = CreateSharedStepSchema.parse(args);
       return createSharedStep(code, stepData);
     })
-    .with({ name: "update_shared_step" }, ({ arguments: args }) => {
+    .with({ name: 'update_shared_step' }, ({ arguments: args }) => {
       const { code, hash, stepData } = UpdateSharedStepSchema.parse(args);
       return updateSharedStep(code, hash, stepData);
     })
-    .with({ name: "delete_shared_step" }, ({ arguments: args }) => {
+    .with({ name: 'delete_shared_step' }, ({ arguments: args }) => {
       const { code, hash } = DeleteSharedStepSchema.parse(args);
       return deleteSharedStep(code, hash);
     })
-    .otherwise(() => errAsync("Unknown tool"))
+    .otherwise(() => errAsync('Unknown tool'))
     .map((response) => response.data.result)
     .map((data) => ({
-      content: [{ type: "text", text: JSON.stringify(data, null, 2) }],
+      content: [{ type: 'text', text: JSON.stringify(data, null, 2) }],
     }))
     .match(
       (data) => data,
@@ -503,7 +502,7 @@ server.setRequestHandler(ListPromptsRequestSchema, async () => ({
  * Handler for the summarize_notes prompt.
  * Returns a prompt that requests summarization of all notes, with the notes' contents embedded as resources.
  */
-server.setRequestHandler(GetPromptRequestSchema, async (request) => ({
+server.setRequestHandler(GetPromptRequestSchema, async () => ({
   messages: [],
 }));
 
@@ -517,6 +516,6 @@ async function main() {
 }
 
 main().catch((error) => {
-  console.error("Server error:", error);
+  console.error('Server error:', error);
   process.exit(1);
 });

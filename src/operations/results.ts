@@ -3,11 +3,11 @@ import {
   ResultCreate,
   ResultCreateBulk,
   ResultUpdate,
-} from "qaseio";
-import { z } from "zod";
-import { toResult } from "../utils.js";
-import { apply, pipe } from "ramda";
-import { client } from "../utils.js";
+} from 'qaseio';
+import { z } from 'zod';
+import { toResult } from '../utils.js';
+import { apply, pipe } from 'ramda';
+import { client } from '../utils.js';
 
 export const GetResultsSchema = z.object({
   code: z.string(),

@@ -1,6 +1,6 @@
-import { z } from "zod";
-import { client, toResult } from "../utils.js";
-import { pipe } from "ramda";
+import { z } from 'zod';
+import { client, toResult } from '../utils.js';
+import { pipe } from 'ramda';
 
 export const GetSuitesSchema = z.object({
   code: z.string(),
@@ -60,4 +60,3 @@ export const deleteSuite = pipe(
   client.suites.deleteSuite.bind(client.suites),
   toResult,
 );
-

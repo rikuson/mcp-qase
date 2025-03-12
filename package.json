@@ -14,7 +14,9 @@
     "build": "tsc && node -e \"require('fs').chmodSync('build/index.js', '755')\"",
     "prepare": "npm run build",
     "watch": "tsc --watch",
-    "inspector": "npx @modelcontextprotocol/inspector build/index.js"
+    "inspector": "npx @modelcontextprotocol/inspector build/index.js",
+    "lint": "eslint . --ext .ts",
+    "lint:fix": "eslint . --ext .ts --fix"
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "0.6.0",
@@ -28,6 +30,17 @@
   },
   "devDependencies": {
     "@types/node": "^20.11.24",
+    "@typescript-eslint/eslint-plugin": "^8.26.1",
+    "eslint": "^9.22.0",
+    "eslint-config-prettier": "^10.1.1",
+    "eslint-plugin-prettier": "^5.2.3",
+    "lint-staged": "^12.0.0",
     "typescript": "^5.3.3"
+  },
+  "lint-staged": {
+    "*.{js,ts,tsx}": [
+      "eslint --fix",
+      "prettier --write"
+    ]
   }
 }

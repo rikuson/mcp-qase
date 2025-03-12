@@ -1,7 +1,7 @@
-import { SharedStepUpdate } from "qaseio";
-import { z } from "zod";
-import { client, toResult } from "../utils.js";
-import { pipe } from "ramda";
+import { SharedStepUpdate } from 'qaseio';
+import { z } from 'zod';
+import { client, toResult } from '../utils.js';
+import { pipe } from 'ramda';
 
 export const GetSharedStepsSchema = z.object({
   code: z.string(),
@@ -93,4 +93,3 @@ export const deleteSharedStep = pipe(
   client.sharedSteps.deleteSharedStep.bind(client.sharedSteps),
   toResult,
 );
-

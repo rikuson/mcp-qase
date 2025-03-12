@@ -1,7 +1,7 @@
-import { ProjectCreateAccessEnum } from "qaseio";
-import { z } from "zod";
-import { client, toResult } from "../utils.js";
-import { pipe } from "ramda";
+import { ProjectCreateAccessEnum } from 'qaseio';
+import { z } from 'zod';
+import { client, toResult } from '../utils.js';
+import { pipe } from 'ramda';
 
 export const ListProjectsSchema = z.object({
   limit: z.number().optional(),

@@ -1,7 +1,7 @@
-import { z } from "zod";
-import { toResult } from "../utils.js";
-import { apply, pipe } from "ramda";
-import { client } from "../utils.js";
+import { z } from 'zod';
+import { toResult } from '../utils.js';
+import { apply, pipe } from 'ramda';
+import { client } from '../utils.js';
 
 export const GetRunsSchema = z.object({
   code: z.string(),
@@ -19,7 +19,7 @@ export const GetRunsSchema = z.object({
 export const GetRunSchema = z.object({
   code: z.string(),
   id: z.number(),
-  include: z.enum(["cases"]).optional(),
+  include: z.enum(['cases']).optional(),
 });
 
 export const getRuns = pipe(

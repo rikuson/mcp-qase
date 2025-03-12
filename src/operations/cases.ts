@@ -1,7 +1,7 @@
-import { TestCaseCreate } from "qaseio";
-import { z } from "zod";
-import { client, toResult } from "../utils.js";
-import { apply, pipe } from "ramda";
+import { TestCaseCreate } from 'qaseio';
+import { z } from 'zod';
+import { client, toResult } from '../utils.js';
+import { apply, pipe } from 'ramda';
 
 export const GetCasesSchema = z.object({
   code: z.string(),
@@ -16,18 +16,18 @@ export const GetCasesSchema = z.object({
   status: z.string().optional(),
   externalIssuesType: z
     .enum([
-      "asana",
-      "azure-devops",
-      "clickup-app",
-      "github-app",
-      "gitlab-app",
-      "jira-cloud",
-      "jira-server",
-      "linear",
-      "monday",
-      "redmine-app",
-      "trello-app",
-      "youtrack-app",
+      'asana',
+      'azure-devops',
+      'clickup-app',
+      'github-app',
+      'gitlab-app',
+      'jira-cloud',
+      'jira-server',
+      'linear',
+      'monday',
+      'redmine-app',
+      'trello-app',
+      'youtrack-app',
     ])
     .optional(),
   externalIssuesIds: z.array(z.string()).optional(),
@@ -154,7 +154,7 @@ export const createCase = pipe(
 );
 
 const convertCaseData = (
-  data: Omit<z.infer<typeof UpdateCaseSchema>, "code" | "id">,
+  data: Omit<z.infer<typeof UpdateCaseSchema>, 'code' | 'id'>,
 ) => ({
   ...data,
   is_flaky: data.is_flaky === undefined ? undefined : data.is_flaky ? 1 : 0,
@@ -173,7 +173,7 @@ export const updateCase = pipe(
   (
     code: string,
     id: number,
-    data: Omit<z.infer<typeof UpdateCaseSchema>, "code" | "id">,
+    data: Omit<z.infer<typeof UpdateCaseSchema>, 'code' | 'id'>,
   ) => client.cases.updateCase(code, id, convertCaseData(data)),
   toResult,
 );

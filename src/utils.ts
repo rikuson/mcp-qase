@@ -1,6 +1,6 @@
-import { AxiosResponse } from "axios";
-import { ResultAsync } from "neverthrow";
-import { QaseApi } from "qaseio";
+import { AxiosResponse } from 'axios';
+import { ResultAsync } from 'neverthrow';
+import { QaseApi } from 'qaseio';
 
 export type ApiError = {
   response?: { data?: { message?: string } };
@@ -26,7 +26,7 @@ export const toResult = (promise: Promise<AxiosResponse>) =>
 export const client = (({ QASE_API_TOKEN }) => {
   if (!QASE_API_TOKEN) {
     throw new Error(
-      "QASE_API_TOKEN environment variable is required. Please set it before running the server.",
+      'QASE_API_TOKEN environment variable is required. Please set it before running the server.',
     );
   }
   return new QaseApi({
