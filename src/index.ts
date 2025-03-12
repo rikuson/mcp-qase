@@ -99,20 +99,6 @@ import { match } from "ts-pattern";
 import { errAsync } from "neverthrow";
 
 /**
- * Type alias for a note object.
- */
-type Note = { title: string; content: string };
-
-/**
- * Simple in-memory storage for notes.
- * In a real implementation, this would likely be backed by a database.
- */
-const notes: { [id: string]: Note } = {
-  "1": { title: "First Note", content: "This is note 1" },
-  "2": { title: "Second Note", content: "This is note 2" },
-};
-
-/**
  * Create an MCP server with capabilities for resources (to list/read notes),
  * tools (to create new notes), and prompts (to summarize notes).
  */
@@ -132,56 +118,17 @@ const server = new Server(
 
 /**
  * Handler for listing available notes as resources.
- * Each note is exposed as a resource with:
- * - A project:// URI scheme
- * - Plain text MIME type
- * - Human readable name and description (now including the project title)
  */
-server.setRequestHandler(ListResourcesRequestSchema, () => {
-  const projectsResult = listProjects()
-    .map((response) => response.data.result?.entities ?? [])
-    .map((projects) => ({
-      resources: projects.map((project: any) => ({
-        uri: `project://${project.code}`,
-        mimeType: "text/plain",
-        name: project.title,
-        description: `A project: ${project.title}`,
-      })),
-    }));
-
-  return projectsResult.match(
-    (data) => data,
-    (error) => {
-      throw new Error(`Failed to list projects: ${error}`);
-    },
-  );
-});
+server.setRequestHandler(ListResourcesRequestSchema, () => ({
+  resources: [],
+}));
 
 /**
- * Handler for reading the contents of a specific project.
- * Takes a project:// URI and returns the project content as plain text.
+ * Handler for reading the contents
  */
-server.setRequestHandler(ReadResourceRequestSchema, (request) => {
-  const code = new URL(request.params.uri).pathname.replace(/^\//, "");
-  const projectResult = getProject(code)
-    .map((response) => response.data.result)
-    .map((project) => ({
-      contents: [
-        {
-          uri: request.params.uri,
-          mimeType: "text/plain",
-          text: JSON.stringify(project, null, 2),
-        },
-      ],
-    }));
-
-  return projectResult.match(
-    (data) => data,
-    (error) => {
-      throw new Error(`Failed to get project: ${error}`);
-    },
-  );
-});
+server.setRequestHandler(ReadResourceRequestSchema, () => ({
+  contents: [],
+}));
 
 /**
  * Handler that lists available tools.
@@ -548,58 +495,17 @@ server.setRequestHandler(CallToolRequestSchema, (request) =>
  * Handler that lists available prompts.
  * Exposes a single "summarize_notes" prompt that summarizes all notes.
  */
-server.setRequestHandler(ListPromptsRequestSchema, async () => {
-  return {
-    prompts: [
-      {
-        name: "summarize_notes",
-        description: "Summarize all notes",
-      },
-    ],
-  };
-});
+server.setRequestHandler(ListPromptsRequestSchema, async () => ({
+  prompts: [],
+}));
 
 /**
  * Handler for the summarize_notes prompt.
  * Returns a prompt that requests summarization of all notes, with the notes' contents embedded as resources.
  */
-server.setRequestHandler(GetPromptRequestSchema, async (request) => {
-  if (request.params.name !== "summarize_notes") {
-    throw new Error("Unknown prompt");
-  }
-
-  const embeddedNotes = Object.entries(notes).map(([id, note]) => ({
-    type: "resource" as const,
-    resource: {
-      uri: `note:///${id}`,
-      mimeType: "text/plain",
-      text: note.content,
-    },
-  }));
-
-  return {
-    messages: [
-      {
-        role: "user",
-        content: {
-          type: "text",
-          text: "Please summarize the following notes:",
-        },
-      },
-      ...embeddedNotes.map((note) => ({
-        role: "user" as const,
-        content: note,
-      })),
-      {
-        role: "user",
-        content: {
-          type: "text",
-          text: "Provide a concise summary of all the notes above.",
-        },
-      },
-    ],
-  };
-});
+server.setRequestHandler(GetPromptRequestSchema, async (request) => ({
+  messages: [],
+}));
 
 /**
  * Start the server using stdio transport.
