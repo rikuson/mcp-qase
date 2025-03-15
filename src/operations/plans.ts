@@ -28,11 +28,6 @@ export const UpdatePlanSchema = z.object({
   cases: z.array(z.number()).optional(),
 });
 
-export const DeletePlanSchema = z.object({
-  code: z.string(),
-  id: z.number(),
-});
-
 export const getPlans = pipe(
   client.plans.getPlans.bind(client.plans),
   toResult,
@@ -47,10 +42,5 @@ export const createPlan = pipe(
 
 export const updatePlan = pipe(
   client.plans.updatePlan.bind(client.plans),
-  toResult,
-);
-
-export const deletePlan = pipe(
-  client.plans.deletePlan.bind(client.plans),
   toResult,
 );

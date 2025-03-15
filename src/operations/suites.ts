@@ -31,11 +31,6 @@ export const UpdateSuiteSchema = z.object({
   parent_id: z.number().optional(),
 });
 
-export const DeleteSuiteSchema = z.object({
-  code: z.string(),
-  id: z.number(),
-});
-
 export const getSuites = pipe(
   client.suites.getSuites.bind(client.suites),
   toResult,
@@ -53,10 +48,5 @@ export const createSuite = pipe(
 
 export const updateSuite = pipe(
   client.suites.updateSuite.bind(client.suites),
-  toResult,
-);
-
-export const deleteSuite = pipe(
-  client.suites.deleteSuite.bind(client.suites),
   toResult,
 );

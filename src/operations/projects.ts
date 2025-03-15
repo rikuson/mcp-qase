@@ -20,10 +20,6 @@ export const CreateProjectSchema = z.object({
   group: z.string().optional(),
 });
 
-export const DeleteProjectSchema = z.object({
-  code: z.string(),
-});
-
 export const listProjects = pipe(
   client.projects.getProjects.bind(client.projects),
   toResult,
@@ -36,10 +32,5 @@ export const getProject = pipe(
 
 export const createProject = pipe(
   client.projects.createProject.bind(client.projects),
-  toResult,
-);
-
-export const deleteProject = pipe(
-  client.projects.deleteProject.bind(client.projects),
   toResult,
 );

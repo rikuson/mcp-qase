@@ -24,9 +24,7 @@ import {
   listProjects,
   getProject,
   createProject,
-  deleteProject,
   CreateProjectSchema,
-  DeleteProjectSchema,
   GetProjectSchema,
   ListProjectsSchema,
 } from './operations/projects.js';
@@ -63,36 +61,30 @@ import {
   getPlan,
   createPlan,
   updatePlan,
-  deletePlan,
   GetPlansSchema,
   GetPlanSchema,
   CreatePlanSchema,
   UpdatePlanSchema,
-  DeletePlanSchema,
 } from './operations/plans.js';
 import {
   GetSuitesSchema,
   GetSuiteSchema,
   CreateSuiteSchema,
   UpdateSuiteSchema,
-  DeleteSuiteSchema,
   getSuites,
   getSuite,
   createSuite,
   updateSuite,
-  deleteSuite,
 } from './operations/suites.js';
 import {
   GetSharedStepsSchema,
   GetSharedStepSchema,
   CreateSharedStepSchema,
   UpdateSharedStepSchema,
-  DeleteSharedStepSchema,
   getSharedSteps,
   getSharedStep,
   createSharedStep,
   updateSharedStep,
-  deleteSharedStep,
 } from './operations/shared-steps.js';
 import { match } from 'ts-pattern';
 import { errAsync } from 'neverthrow';
@@ -149,11 +141,6 @@ server.setRequestHandler(ListToolsRequestSchema, () => ({
       name: 'create_project',
       description: 'Create new project',
       inputSchema: zodToJsonSchema(CreateProjectSchema),
-    },
-    {
-      name: 'delete_project',
-      description: 'Delete Project by code',
-      inputSchema: zodToJsonSchema(DeleteProjectSchema),
     },
     {
       name: 'get_results',
@@ -231,11 +218,6 @@ server.setRequestHandler(ListToolsRequestSchema, () => ({
       inputSchema: zodToJsonSchema(UpdatePlanSchema),
     },
     {
-      name: 'delete_plan',
-      description: 'Delete a test plan',
-      inputSchema: zodToJsonSchema(DeletePlanSchema),
-    },
-    {
       name: 'get_suites',
       description: 'Get all test suites in a project',
       inputSchema: zodToJsonSchema(GetSuitesSchema),
@@ -254,11 +236,6 @@ server.setRequestHandler(ListToolsRequestSchema, () => ({
       name: 'update_suite',
       description: 'Update an existing test suite',
       inputSchema: zodToJsonSchema(UpdateSuiteSchema),
-    },
-    {
-      name: 'delete_suite',
-      description: 'Delete a test suite',
-      inputSchema: zodToJsonSchema(DeleteSuiteSchema),
     },
     {
       name: 'get_shared_steps',
@@ -280,11 +257,6 @@ server.setRequestHandler(ListToolsRequestSchema, () => ({
       description: 'Update an existing shared step',
       inputSchema: zodToJsonSchema(UpdateSharedStepSchema),
     },
-    {
-      name: 'delete_shared_step',
-      description: 'Delete a shared step',
-      inputSchema: zodToJsonSchema(DeleteSharedStepSchema),
-    },
   ],
 }));
 
@@ -305,10 +277,6 @@ server.setRequestHandler(CallToolRequestSchema, (request) =>
     .with({ name: 'create_project' }, ({ arguments: args }) => {
       const parsedArgs = CreateProjectSchema.parse(args);
       return createProject(parsedArgs);
-    })
-    .with({ name: 'delete_project' }, ({ arguments: args }) => {
-      const { code } = DeleteProjectSchema.parse(args);
-      return deleteProject(code);
     })
     .with({ name: 'get_results' }, ({ arguments: args }) => {
       const parsedArgs = GetResultsSchema.parse(args);
@@ -433,10 +401,6 @@ server.setRequestHandler(CallToolRequestSchema, (request) =>
       const { code, id, ...planData } = UpdatePlanSchema.parse(args);
       return updatePlan(code, id, planData);
     })
-    .with({ name: 'delete_plan' }, ({ arguments: args }) => {
-      const { code, id } = DeletePlanSchema.parse(args);
-      return deletePlan(code, id);
-    })
     .with({ name: 'get_suites' }, ({ arguments: args }) => {
       const { code, search, limit, offset } = GetSuitesSchema.parse(args);
       return getSuites(code, search, limit, offset);
@@ -453,10 +417,6 @@ server.setRequestHandler(CallToolRequestSchema, (request) =>
       const { code, id, ...suiteData } = UpdateSuiteSchema.parse(args);
       return updateSuite(code, id, suiteData);
     })
-    .with({ name: 'delete_suite' }, ({ arguments: args }) => {
-      const { code, id } = DeleteSuiteSchema.parse(args);
-      return deleteSuite(code, id);
-    })
     .with({ name: 'get_shared_steps' }, ({ arguments: args }) => {
       const { code, search, limit, offset } = GetSharedStepsSchema.parse(args);
       return getSharedSteps(code, search, limit, offset);
@@ -472,10 +432,6 @@ server.setRequestHandler(CallToolRequestSchema, (request) =>
     .with({ name: 'update_shared_step' }, ({ arguments: args }) => {
       const { code, hash, stepData } = UpdateSharedStepSchema.parse(args);
       return updateSharedStep(code, hash, stepData);
-    })
-    .with({ name: 'delete_shared_step' }, ({ arguments: args }) => {
-      const { code, hash } = DeleteSharedStepSchema.parse(args);
-      return deleteSharedStep(code, hash);
     })
     .otherwise(() => errAsync('Unknown tool'))
     .map((response) => response.data.result)

@@ -64,11 +64,6 @@ export const UpdateSharedStepSchema = z
     } as SharedStepUpdate,
   }));
 
-export const DeleteSharedStepSchema = z.object({
-  code: z.string(),
-  hash: z.string(),
-});
-
 export const getSharedSteps = pipe(
   client.sharedSteps.getSharedSteps.bind(client.sharedSteps),
   toResult,
@@ -86,10 +81,5 @@ export const createSharedStep = pipe(
 
 export const updateSharedStep = pipe(
   client.sharedSteps.updateSharedStep.bind(client.sharedSteps),
-  toResult,
-);
-
-export const deleteSharedStep = pipe(
-  client.sharedSteps.deleteSharedStep.bind(client.sharedSteps),
   toResult,
 );
