@@ -4,6 +4,10 @@ MCP server implementation for Qase API
 
 This is a TypeScript-based MCP server that provides integration with the Qase test management platform. It implements core MCP concepts by providing tools for interacting with various Qase entities.
 
+<a href="https://glama.ai/mcp/servers/@rikuson/mcp-qase">
+  <img width="380" height="200" src="https://glama.ai/mcp/servers/@rikuson/mcp-qase/badge" alt="QASE Server MCP server" />
+</a>
+
 ## Features
 
 ### Tools
