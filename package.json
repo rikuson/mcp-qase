@@ -15,7 +15,7 @@
     "prepare": "npm run build",
     "watch": "tsc --watch",
     "inspector": "npx @modelcontextprotocol/inspector build/index.js",
-    "lint": "eslint . --ext .ts",
+    "lint": "eslint src --ext .ts",
     "lint:fix": "eslint . --ext .ts --fix"
   },
   "dependencies": {
