@@ -10,7 +10,7 @@ USER service-user
 
 WORKDIR /app
 
-RUN git clone https://github.com/rikuson/mcp-qase . && git checkout 661b4e8bcdb84408be29caed540315e6bb870269
+RUN git clone https://github.com/rikuson/mcp-qase .
 
 RUN (npm install) && (npm run build)
 
