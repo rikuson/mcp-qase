@@ -1,6 +1,6 @@
-# QASE MCP Server
-
 > **Note:** An official Qase MCP server is now available at [qase-tms/qase-mcp-server](https://github.com/qase-tms/qase-mcp-server). Consider using the official server for production use.
+
+# QASE MCP Server
 
 MCP server implementation for Qase API
 
