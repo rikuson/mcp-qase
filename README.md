@@ -1,5 +1,7 @@
 # QASE MCP Server
 
+> **Note:** An official Qase MCP server is now available at [qase-tms/qase-mcp-server](https://github.com/qase-tms/qase-mcp-server). Consider using the official server for production use.
+
 MCP server implementation for Qase API
 
 This is a TypeScript-based MCP server that provides integration with the Qase test management platform. It implements core MCP concepts by providing tools for interacting with various Qase entities.
